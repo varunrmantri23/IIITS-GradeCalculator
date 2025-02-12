@@ -15,7 +15,7 @@ FEATURES
 
 QUICK START
 
-1. Visit the calculator: https://varunrmantri23.github.io/IIITS-GradeCalculator
+1. Visit the calculator: https://iiits-grade-calculator.vercel.app/
 2. Select your branch (CSE/ECE)
 3. Add your courses and grades
 4. View your GPA in real-time
@@ -41,4 +41,4 @@ Varun Mantri
 Email: varunrmantri23@gmail.com
 GitHub: @varunrmantri23
 
-Made with ❤️ for IIIT Sri City students 
+Made with ❤️ for IIIT Sri City students
