@@ -432,7 +432,7 @@ const BASE_ECE_CURRICULUM = {
                 {
                     code: "IEC101",
                     name: "Overview of Computers Workshop",
-                    credits: 2,
+                    credits: 4,
                 },
                 { code: "IEC102", name: "Digital Logic Design", credits: 4 },
             ],
