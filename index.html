@@ -15,7 +15,7 @@
         </style>
     </head>
     <body class="bg-gray-50">
-        <div class="min-h-screen p-6 lg:p-8">
+        <div class="min-h-screen p-4 sm:p-6 lg:p-8">
             <!-- Header -->
             <header class="max-w-4xl mx-auto mb-8">
                 <div class="flex items-center space-x-4 mb-6">
@@ -39,13 +39,15 @@
             <main class="max-w-4xl mx-auto">
                 <!-- Branch Selection -->
                 <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-                    <div class="flex items-center space-x-4">
+                    <div
+                        class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
+                    >
                         <label class="text-sm font-medium text-gray-700"
                             >Select Branch:</label
                         >
                         <select
                             id="branchSelect"
-                            class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            class="w-full sm:w-auto rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         >
                             <option value="cse">
                                 Computer Science & Engineering
@@ -59,9 +61,10 @@
 
                 <!-- Add after branch selection -->
                 <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-sm font-medium text-gray-700"
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="w-full">
+                            <label
+                                class="text-sm font-medium text-gray-700 block mb-1"
                                 >Specialization</label
                             >
                             <select
@@ -69,11 +72,11 @@
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             >
                                 <option value="">No Specialization</option>
-                                <!-- Options will be populated based on branch -->
                             </select>
                         </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-700"
+                        <div class="w-full">
+                            <label
+                                class="text-sm font-medium text-gray-700 block mb-1"
                                 >Honors</label
                             >
                             <select
@@ -235,11 +238,22 @@
                         </div>
 
                         <!-- Courses Table -->
-                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                        <div
+                            class="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6"
+                        >
                             <h2 class="text-lg font-semibold mb-4">
                                 Added Courses
                             </h2>
-                            <div class="overflow-x-auto">
+
+                            <!-- Mobile View (Card Layout) -->
+                            <div class="block sm:hidden">
+                                <div class="space-y-3" id="courseCardsMobile">
+                                    <!-- Course cards for mobile will be added here -->
+                                </div>
+                            </div>
+
+                            <!-- Desktop View (Table Layout) -->
+                            <div class="hidden sm:block overflow-x-auto">
                                 <table
                                     class="min-w-full divide-y divide-gray-200"
                                 >
@@ -330,7 +344,9 @@
 
                     <!-- Semester View -->
                     <div id="semesterViewSection" class="hidden">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-2 gap-4 px-2 sm:px-4"
+                        >
                             <!-- Semester cards will be generated here -->
                         </div>
                     </div>
@@ -363,7 +379,9 @@
 
                     <div id="missingCourseForm" class="hidden mt-4">
                         <form id="customCourseForm" class="space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div
+                                class="grid grid-cols-1 sm:grid-cols-2 gap-4 px-2 sm:px-4"
+                            >
                                 <div>
                                     <label
                                         class="text-sm font-medium text-gray-700"

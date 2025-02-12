@@ -704,8 +704,15 @@ class GradeCalculator {
     }
 
     renderCourses() {
+        // Update table view for desktop
         this.courseTableBody.innerHTML = "";
+
+        // Update card view for mobile
+        const mobileContainer = document.getElementById("courseCardsMobile");
+        mobileContainer.innerHTML = "";
+
         this.courses.forEach((course) => {
+            // Add to table view (desktop)
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -723,23 +730,64 @@ class GradeCalculator {
                     }
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button 
-                        class="text-red-600 hover:text-red-900 delete-course"
-                        data-code="${course.code}"
-                    >
+                    <button class="text-red-600 hover:text-red-900 delete-course" data-code="${
+                        course.code
+                    }">
                         Remove
                     </button>
                 </td>
             `;
+            this.courseTableBody.appendChild(row);
 
-            const deleteButton = row.querySelector(".delete-course");
-            deleteButton.addEventListener("click", () => {
+            // Add to card view (mobile)
+            const card = document.createElement("div");
+            card.className = "bg-gray-50 rounded-lg p-4 relative";
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <h3 class="font-medium text-gray-900">${
+                            course.name
+                        }</h3>
+                        <p class="text-sm text-gray-500">${course.code}</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            course.grade >= 8
+                                ? "bg-green-100 text-green-800"
+                                : course.grade >= 6
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                        }">
+                            Grade: ${
+                                Object.entries(GRADES).find(
+                                    ([_, value]) => value === course.grade
+                                )[0]
+                            }
+                        </span>
+                        <button class="text-red-600 hover:text-red-900 delete-course" data-code="${
+                            course.code
+                        }">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center text-sm text-gray-500">
+                    <span>Credits: ${course.credits}</span>
+                    <span>Type: ${this.getCourseTypeLabel(course.type)}</span>
+                </div>
+            `;
+            mobileContainer.appendChild(card);
+        });
+
+        // Add event listeners to delete buttons
+        document.querySelectorAll(".delete-course").forEach((button) => {
+            button.addEventListener("click", () => {
                 if (confirm("Are you sure you want to remove this course?")) {
-                    this.removeCourse(course.code);
+                    this.removeCourse(button.dataset.code);
                 }
             });
-
-            this.courseTableBody.appendChild(row);
         });
 
         // Show/hide result card
