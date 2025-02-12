@@ -49,7 +49,6 @@ class GradeCalculator {
         this.gpaResult = document.getElementById("gpaResult");
         this.totalCredits = document.getElementById("totalCredits");
         this.clearAllBtn = document.getElementById("clearAll");
-        this.saveDataBtn = document.getElementById("saveData");
         this.listViewBtn = document.getElementById("listView");
         this.semesterViewBtn = document.getElementById("semesterView");
         this.listViewSection = document.getElementById("listViewSection");
@@ -87,7 +86,6 @@ class GradeCalculator {
             this.updateCourseOptions()
         );
         this.clearAllBtn.addEventListener("click", () => this.clearAll());
-        this.saveDataBtn.addEventListener("click", () => this.saveData());
     }
 
     setupViewToggle() {
@@ -499,21 +497,18 @@ class GradeCalculator {
         // Update table view for desktop
         this.courseTableBody.innerHTML = "";
 
-        // Update card view for mobile
-        const mobileContainer = document.getElementById("courseCardsMobile");
-        mobileContainer.innerHTML = "";
-
+        // Add desktop table rows
         this.courses.forEach((course) => {
-            // Add to table view (desktop)
             const row = document.createElement("tr");
+            row.className = "hover:bg-gray-50 transition-colors duration-200";
             row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <div class="font-medium">${course.name}</div>
-                    <div class="text-gray-500">${course.code}</div>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="font-medium text-gray-900">${course.name}</div>
+                    <div class="text-sm text-gray-500">${course.code}</div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${
-                    course.credits
-                }</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ${course.credits}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     ${
                         Object.entries(GRADES).find(
@@ -521,8 +516,8 @@ class GradeCalculator {
                         )[0]
                     }
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button class="text-red-600 hover:text-red-900 delete-course" data-code="${
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <button class="text-red-600 hover:text-red-800 font-medium delete-course" data-code="${
                         course.code
                     }">
                         Remove
@@ -530,44 +525,42 @@ class GradeCalculator {
                 </td>
             `;
             this.courseTableBody.appendChild(row);
+        });
 
-            // Add to card view (mobile)
+        // Update mobile view (keep existing mobile code)
+        const mobileContainer = document.getElementById("courseCardsMobile");
+        mobileContainer.innerHTML = "";
+
+        this.courses.forEach((course) => {
             const card = document.createElement("div");
-            card.className = "bg-gray-50 rounded-lg p-4 relative";
+            card.className = "bg-gray-50 rounded-lg p-4 border border-gray-200";
             card.innerHTML = `
-                <div class="flex justify-between items-start mb-2">
+                <div class="flex justify-between items-start">
                     <div>
                         <h3 class="font-medium text-gray-900">${
                             course.name
                         }</h3>
-                        <p class="text-sm text-gray-500">${course.code}</p>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            course.grade >= 8
-                                ? "bg-green-100 text-green-800"
-                                : course.grade >= 6
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-red-100 text-red-800"
-                        }">
-                            Grade: ${
-                                Object.entries(GRADES).find(
-                                    ([_, value]) => value === course.grade
-                                )[0]
-                            }
-                        </span>
-                        <button class="text-red-600 hover:text-red-900 delete-course" data-code="${
+                        <p class="text-sm text-gray-500 mt-0.5">${
                             course.code
-                        }">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
+                        }</p>
                     </div>
+                    <span class="text-sm font-medium text-green-700">
+                        Grade: ${
+                            Object.entries(GRADES).find(
+                                ([_, value]) => value === course.grade
+                            )[0]
+                        }
+                    </span>
                 </div>
-                <div class="flex justify-between items-center text-sm text-gray-500">
-                    <span>Credits: ${course.credits}</span>
-                    <span>Type: ${this.getCourseTypeLabel(course.type)}</span>
+                <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-200">
+                    <span class="text-sm text-gray-600">Credits: ${
+                        course.credits
+                    }</span>
+                    <button class="text-red-600 hover:text-red-800 text-sm font-medium delete-course" data-code="${
+                        course.code
+                    }">
+                        Remove
+                    </button>
                 </div>
             `;
             mobileContainer.appendChild(card);
@@ -685,14 +678,6 @@ class GradeCalculator {
 
             // Update curriculum
             this.updateCurriculum();
-        }
-    }
-
-    saveData() {
-        if (this.saveToStorage()) {
-            alert("Data saved successfully!");
-        } else {
-            alert("Failed to save data. Please try again.");
         }
     }
 

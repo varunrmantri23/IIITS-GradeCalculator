@@ -46,97 +46,164 @@
             <!-- Main Content -->
             <main class="max-w-4xl mx-auto">
                 <!-- Branch Selection -->
-                <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
                     <div
                         class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
                     >
-                        <label class="text-sm font-medium text-gray-700"
-                            >Select Branch:</label
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-2 sm:mb-0"
                         >
-                        <select
-                            id="branchSelect"
-                            class="w-full sm:w-auto rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        >
-                            <option value="cse">
-                                Computer Science & Engineering
-                            </option>
-                            <option value="ece">
-                                Electronics & Communication Engineering
-                            </option>
-                        </select>
+                            Select Branch
+                        </label>
+                        <div class="relative w-full sm:w-auto">
+                            <select
+                                id="branchSelect"
+                                class="w-full h-10 pl-4 pr-10 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200 appearance-none"
+                            >
+                                <option value="cse">
+                                    Computer Science & Engineering
+                                </option>
+                                <option value="ece">
+                                    Electronics & Communication Engineering
+                                </option>
+                            </select>
+                            <!-- Custom dropdown arrow -->
+                            <div
+                                class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                            >
+                                <svg
+                                    class="w-5 h-5 text-gray-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M19 9l-7 7-7-7"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Add after branch selection -->
-                <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="w-full">
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Specialization Dropdown -->
+                        <div>
                             <label
-                                class="text-sm font-medium text-gray-700 block mb-1"
-                                >Specialization</label
+                                class="block text-sm font-medium text-gray-700 mb-2"
                             >
-                            <select
-                                id="specializationSelect"
-                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            >
-                                <option value="">No Specialization</option>
-                            </select>
+                                Specialization Track
+                            </label>
+                            <div class="relative">
+                                <select
+                                    id="specializationSelect"
+                                    class="w-full h-10 pl-4 pr-10 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200 appearance-none"
+                                >
+                                    <option value="">No Specialization</option>
+                                </select>
+                                <!-- Custom dropdown arrow -->
+                                <div
+                                    class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                                >
+                                    <svg
+                                        class="w-5 h-5 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 9l-7 7-7-7"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
-                        <div class="w-full">
+
+                        <!-- Honors Toggle -->
+                        <div>
                             <label
-                                class="text-sm font-medium text-gray-700 block mb-1"
-                                >Honors</label
+                                class="block text-sm font-medium text-gray-700 mb-2"
                             >
-                            <select
-                                id="honorsSelect"
-                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            >
-                                <option value="no">No</option>
-                                <option value="yes">Yes</option>
-                            </select>
+                                Honors Program
+                            </label>
+                            <div class="relative">
+                                <select
+                                    id="honorsSelect"
+                                    class="w-full h-10 pl-4 pr-10 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200 appearance-none"
+                                >
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes</option>
+                                </select>
+                                <!-- Custom dropdown arrow -->
+                                <div
+                                    class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                                >
+                                    <svg
+                                        class="w-5 h-5 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 9l-7 7-7-7"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Grade Reference Card -->
                 <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                    <h2 class="text-lg font-semibold mb-4">Grade Reference</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <h2 class="text-lg font-semibold mb-3">Grade Reference</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                         <div
-                            class="flex justify-between p-2 bg-gray-50 rounded"
+                            class="flex justify-between p-2 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200"
                         >
-                            <span class="font-medium">O</span>
-                            <span>10</span>
+                            <span class="font-medium text-gray-700">O</span>
+                            <span class="text-gray-900">10</span>
                         </div>
                         <div
-                            class="flex justify-between p-2 bg-gray-50 rounded"
+                            class="flex justify-between p-2 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200"
                         >
-                            <span class="font-medium">A</span>
-                            <span>9</span>
+                            <span class="font-medium text-gray-700">A</span>
+                            <span class="text-gray-900">9</span>
                         </div>
                         <div
-                            class="flex justify-between p-2 bg-gray-50 rounded"
+                            class="flex justify-between p-2 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200"
                         >
-                            <span class="font-medium">B</span>
-                            <span>8</span>
+                            <span class="font-medium text-gray-700">B</span>
+                            <span class="text-gray-900">8</span>
                         </div>
                         <div
-                            class="flex justify-between p-2 bg-gray-50 rounded"
+                            class="flex justify-between p-2 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200"
                         >
-                            <span class="font-medium">C</span>
-                            <span>7</span>
+                            <span class="font-medium text-gray-700">C</span>
+                            <span class="text-gray-900">7</span>
                         </div>
                         <div
-                            class="flex justify-between p-2 bg-gray-50 rounded"
+                            class="flex justify-between p-2 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200"
                         >
-                            <span class="font-medium">D</span>
-                            <span>6</span>
+                            <span class="font-medium text-gray-700">D</span>
+                            <span class="text-gray-900">6</span>
                         </div>
                         <div
-                            class="flex justify-between p-2 bg-gray-50 rounded"
+                            class="flex justify-between p-2 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors duration-200"
                         >
-                            <span class="font-medium">E</span>
-                            <span>5</span>
+                            <span class="font-medium text-gray-700">E</span>
+                            <span class="text-gray-900">5</span>
                         </div>
                     </div>
                 </div>
@@ -177,63 +244,139 @@
                                             class="block text-sm font-medium text-gray-700 mb-1"
                                             >Semester</label
                                         >
-                                        <select
-                                            id="semester"
-                                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                        >
-                                            <option value="">
-                                                Select Semester
-                                            </option>
-                                        </select>
+                                        <div class="relative">
+                                            <select
+                                                id="semester"
+                                                class="w-full h-10 pl-4 pr-10 rounded-lg border border-gray-300 bg-gray-100 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200 appearance-none"
+                                            >
+                                                <option value="">
+                                                    Select Semester
+                                                </option>
+                                            </select>
+                                            <div
+                                                class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                                            >
+                                                <svg
+                                                    class="w-5 h-5 text-gray-400"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 9l-7 7-7-7"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div>
                                         <label
                                             class="block text-sm font-medium text-gray-700 mb-1"
                                             >Course Type</label
                                         >
-                                        <select
-                                            id="courseType"
-                                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                        >
-                                            <option value="">
-                                                Select Type
-                                            </option>
-                                        </select>
+                                        <div class="relative">
+                                            <select
+                                                id="courseType"
+                                                class="w-full h-10 pl-4 pr-10 rounded-lg border border-gray-300 bg-gray-100 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200 appearance-none"
+                                            >
+                                                <option value="">
+                                                    Select Type
+                                                </option>
+                                            </select>
+                                            <div
+                                                class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                                            >
+                                                <svg
+                                                    class="w-5 h-5 text-gray-400"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 9l-7 7-7-7"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div>
                                         <label
                                             class="block text-sm font-medium text-gray-700 mb-1"
                                             >Course</label
                                         >
-                                        <select
-                                            id="courseName"
-                                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                        >
-                                            <option value="">
-                                                Select Course
-                                            </option>
-                                        </select>
+                                        <div class="relative">
+                                            <select
+                                                id="courseName"
+                                                class="w-full h-10 pl-4 pr-10 rounded-lg border border-gray-300 bg-gray-100 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200 appearance-none"
+                                            >
+                                                <option value="">
+                                                    Select Course
+                                                </option>
+                                            </select>
+                                            <div
+                                                class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                                            >
+                                                <svg
+                                                    class="w-5 h-5 text-gray-400"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 9l-7 7-7-7"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div>
                                         <label
                                             class="block text-sm font-medium text-gray-700 mb-1"
                                             >Grade</label
                                         >
-                                        <select
-                                            id="grade"
-                                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                        >
-                                            <option value="">
-                                                Select Grade
-                                            </option>
-                                            <option value="10">O</option>
-                                            <option value="9">A</option>
-                                            <option value="8">B</option>
-                                            <option value="7">C</option>
-                                            <option value="6">D</option>
-                                            <option value="5">E</option>
-                                            <option value="0">F</option>
-                                        </select>
+                                        <div class="relative">
+                                            <select
+                                                id="grade"
+                                                class="w-full h-10 pl-4 pr-10 rounded-lg border border-gray-300 bg-gray-100 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200 appearance-none"
+                                            >
+                                                <option value="">
+                                                    Select Grade
+                                                </option>
+                                                <option value="10">O</option>
+                                                <option value="9">A</option>
+                                                <option value="8">B</option>
+                                                <option value="7">C</option>
+                                                <option value="6">D</option>
+                                                <option value="5">E</option>
+                                                <option value="0">F</option>
+                                            </select>
+                                            <div
+                                                class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                                            >
+                                                <svg
+                                                    class="w-5 h-5 text-gray-400"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 9l-7 7-7-7"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <button
@@ -256,7 +399,44 @@
                             <!-- Mobile View (Card Layout) -->
                             <div class="block sm:hidden">
                                 <div class="space-y-3" id="courseCardsMobile">
-                                    <!-- Course cards for mobile will be added here -->
+                                    <!-- Each mobile card will have this structure -->
+                                    <div
+                                        class="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                                    >
+                                        <div
+                                            class="flex justify-between items-start"
+                                        >
+                                            <div>
+                                                <h3
+                                                    class="font-medium text-gray-900"
+                                                >
+                                                    Course Name
+                                                </h3>
+                                                <p
+                                                    class="text-sm text-gray-500 mt-0.5"
+                                                >
+                                                    Course Code
+                                                </p>
+                                            </div>
+                                            <span
+                                                class="text-sm font-medium text-green-700"
+                                            >
+                                                Grade: A
+                                            </span>
+                                        </div>
+                                        <div
+                                            class="flex justify-between items-center mt-3 pt-3 border-t border-gray-200"
+                                        >
+                                            <span class="text-sm text-gray-600"
+                                                >Credits: 4</span
+                                            >
+                                            <button
+                                                class="text-red-600 hover:text-red-800 text-sm font-medium"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -270,7 +450,7 @@
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                             >
-                                                Course
+                                                Course Details
                                             </th>
                                             <th
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -293,7 +473,48 @@
                                         id="courseTableBody"
                                         class="bg-white divide-y divide-gray-200"
                                     >
-                                        <!-- Courses will be added here dynamically -->
+                                        <!-- Each row will have this structure -->
+                                        <tr
+                                            class="hover:bg-gray-50 transition-colors duration-200"
+                                        >
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap"
+                                            >
+                                                <div
+                                                    class="font-medium text-gray-900"
+                                                >
+                                                    Course Name
+                                                </div>
+                                                <div
+                                                    class="text-sm text-gray-500"
+                                                >
+                                                    Course Code
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                                            >
+                                                4
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap"
+                                            >
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                                >
+                                                    A
+                                                </span>
+                                            </td>
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap text-sm"
+                                            >
+                                                <button
+                                                    class="text-red-600 hover:text-red-800 font-medium"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -341,12 +562,6 @@
                             >
                                 Clear All
                             </button>
-                            <button
-                                id="saveData"
-                                class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                            >
-                                Save Data
-                            </button>
                         </div>
                     </div>
 
@@ -390,88 +605,170 @@
                             <div
                                 class="grid grid-cols-1 sm:grid-cols-2 gap-4 px-2 sm:px-4"
                             >
+                                <!-- Course Name Input -->
                                 <div>
                                     <label
-                                        class="text-sm font-medium text-gray-700"
+                                        class="block text-sm font-medium text-gray-700 mb-1"
                                         >Course Name</label
                                     >
                                     <input
                                         type="text"
                                         id="customCourseName"
                                         required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        class="w-full h-10 pl-4 pr-4 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200"
                                     />
                                 </div>
+
+                                <!-- Course Code Input -->
                                 <div>
                                     <label
-                                        class="text-sm font-medium text-gray-700"
+                                        class="block text-sm font-medium text-gray-700 mb-1"
                                         >Course Code</label
                                     >
                                     <input
                                         type="text"
                                         id="customCourseCode"
                                         placeholder="Optional"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        class="w-full h-10 pl-4 pr-4 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200"
                                     />
                                 </div>
+
+                                <!-- Credits Input -->
                                 <div>
                                     <label
-                                        class="text-sm font-medium text-gray-700"
+                                        class="block text-sm font-medium text-gray-700 mb-1"
                                         >Credits</label
                                     >
-                                    <input
-                                        type="number"
-                                        id="customCourseCredits"
-                                        min="1"
-                                        max="4"
-                                        required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    />
+                                    <div class="relative">
+                                        <select
+                                            id="customCourseCredits"
+                                            required
+                                            class="w-full h-10 pl-4 pr-10 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200 appearance-none"
+                                        >
+                                            <option value="">
+                                                Select Credits
+                                            </option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
+                                        <div
+                                            class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                                        >
+                                            <svg
+                                                class="w-5 h-5 text-gray-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M19 9l-7 7-7-7"
+                                                />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <!-- Semester Dropdown -->
                                 <div>
                                     <label
-                                        class="text-sm font-medium text-gray-700"
+                                        class="block text-sm font-medium text-gray-700 mb-1"
                                         >Semester</label
                                     >
-                                    <select
-                                        id="customCourseSemester"
-                                        required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    >
-                                        <option value="">
-                                            Select Semester
-                                        </option>
-                                        <option value="5">Semester 5</option>
-                                        <option value="6">Semester 6</option>
-                                        <option value="7">Semester 7</option>
-                                        <option value="8">Semester 8</option>
-                                    </select>
+                                    <div class="relative">
+                                        <select
+                                            id="customCourseSemester"
+                                            required
+                                            class="w-full h-10 pl-4 pr-10 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200 appearance-none"
+                                        >
+                                            <option value="">
+                                                Select Semester
+                                            </option>
+                                            <option value="5">
+                                                Semester 5
+                                            </option>
+                                            <option value="6">
+                                                Semester 6
+                                            </option>
+                                            <option value="7">
+                                                Semester 7
+                                            </option>
+                                            <option value="8">
+                                                Semester 8
+                                            </option>
+                                        </select>
+                                        <div
+                                            class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                                        >
+                                            <svg
+                                                class="w-5 h-5 text-gray-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M19 9l-7 7-7-7"
+                                                />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <!-- Course Type Dropdown -->
                                 <div>
                                     <label
-                                        class="text-sm font-medium text-gray-700"
+                                        class="block text-sm font-medium text-gray-700 mb-1"
                                         >Course Type</label
                                     >
-                                    <select
-                                        id="customCourseType"
-                                        required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    >
-                                        <option value="">Select Type</option>
-                                        <option value="program_elective">
-                                            Program Elective
-                                        </option>
-                                        <option value="institute_elective">
-                                            Institute Elective
-                                        </option>
-                                        <option value="ssham">SSHAM</option>
-                                    </select>
+                                    <div class="relative">
+                                        <select
+                                            id="customCourseType"
+                                            required
+                                            class="w-full h-10 pl-4 pr-10 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 shadow-sm focus:ring-2 focus:ring-gray-200 transition-all duration-200 appearance-none"
+                                        >
+                                            <option value="">
+                                                Select Type
+                                            </option>
+                                            <option value="program_elective">
+                                                Program Elective
+                                            </option>
+                                            <option value="institute_elective">
+                                                Institute Elective
+                                            </option>
+                                            <option value="ssham">SSHAM</option>
+                                        </select>
+                                        <div
+                                            class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+                                        >
+                                            <svg
+                                                class="w-5 h-5 text-gray-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M19 9l-7 7-7-7"
+                                                />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
                             <div class="flex justify-end">
                                 <button
                                     type="submit"
-                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
                                 >
                                     Add Course & Notify Admin
                                 </button>
