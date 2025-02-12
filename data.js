@@ -52,10 +52,10 @@ const BTP_COURSES = {
 
 // Honors Courses
 const HONORS_COURSES = {
-    5: { code: "HON501", name: "Honors Project 1", credits: 2 },
-    6: { code: "HON601", name: "Honors Project 2", credits: 2 },
-    7: { code: "HON701", name: "Honors Project 3", credits: 2 },
-    8: { code: "HON801", name: "Honors Project 4", credits: 2 },
+    5: { code: "HON501", name: "Honors Project 1", credits: 4 },
+    6: { code: "HON601", name: "Honors Project 2", credits: 4 },
+    7: { code: "HON701", name: "Honors Project 3", credits: 4 },
+    8: { code: "HON801", name: "Honors Project 4", credits: 4 },
 };
 
 // Program Electives
