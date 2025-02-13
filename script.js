@@ -8,7 +8,6 @@ import {
     HONORS_COURSES,
     BTP_COURSES,
 } from "./data.js";
-import { config } from "./config.js";
 
 class GradeCalculator {
     constructor() {
@@ -1165,7 +1164,7 @@ const PROMPTS = {
 
         Rules:
         - Generate one roast per course, each starting with "1) ", "2) ", etc.
-        - Each roast MUST be a complete sentence in this exact format:
+        - Each roast MUST be in this exact format:
         - Format: "1) In **CourseName**, [your roast here]"
         - Use CS/programming puns and technical humor
         - For grades 9-10: Mock their perfectionism
@@ -1224,16 +1223,28 @@ const processResponse = (text) => {
     return cleanText;
 };
 
+// Get environment variables
+const HF_TOKEN = process.env.HF_TOKEN;
+const MODEL_NAME = process.env.MODEL_NAME;
+
 // Update the handleModeSelection function
 window.handleModeSelection = async function (mode) {
     if (isProcessing) return;
     isProcessing = true;
     chatMessages.innerHTML = "";
 
+    // Check if config is properly loaded
+    if (!HF_TOKEN || !MODEL_NAME) {
+        addMessage("Configuration error. Please try again later.");
+        isProcessing = false;
+        return;
+    }
+
     try {
         const record = getAcademicRecord();
         if (!record) {
             addMessage("Please add some courses first!");
+            isProcessing = false;
             return;
         }
 
@@ -1251,33 +1262,41 @@ window.handleModeSelection = async function (mode) {
             '<div class="typing-indicator"><span></span><span></span><span></span></div>'
         );
 
-        const response = await fetch(
-            `https://api-inference.huggingface.co/models/${config.MODEL_NAME}`,
-            {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${config.HF_TOKEN}`,
-                    "Content-Type": "application/json",
+        // Validate API URL and token
+        const API_URL = `https://api-inference.huggingface.co/models/${MODEL_NAME}`;
+        if (!API_URL.includes("huggingface")) {
+            throw new Error("Invalid API configuration");
+        }
+
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${HF_TOKEN}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                inputs: PROMPTS[mode](record, stats),
+                parameters: {
+                    max_new_tokens: 1024,
+                    temperature: 0.9,
+                    return_full_text: false,
                 },
-                body: JSON.stringify({
-                    inputs: PROMPTS[mode](record, stats),
-                    parameters: {
-                        max_new_tokens: 1024,
-                        temperature: 0.9, // Increase creativity for roasts
-                        return_full_text: false,
-                    },
-                }),
-            }
-        );
+            }),
+            // Add timeout
+            signal: AbortSignal.timeout(15000),
+        });
 
         if (!response.ok) {
-            throw new Error(`API responded with status: ${response.status}`);
+            throw new Error(
+                `API Error: ${response.status} - ${await response.text()}`
+            );
         }
 
         const result = await response.json();
 
+        // Validate response format
         if (!result[0]?.generated_text) {
-            throw new Error("Invalid response format");
+            throw new Error("Invalid API response format");
         }
 
         const points = processResponse(result[0].generated_text);
@@ -1290,18 +1309,24 @@ window.handleModeSelection = async function (mode) {
 
         for (const point of points) {
             const formattedPoint = point.replace(/^\d+\)\s*/, "").trim();
-
             await addMessageWithDelay(formattedPoint, 1200);
         }
     } catch (error) {
         console.error("API Error:", error);
         chatMessages.removeChild(chatMessages.lastChild);
+        // More specific error messages
         if (error.name === "AbortError") {
-            addMessage("The request took too long. Please try again.");
-        } else {
+            addMessage("Request timeout. Please try again.");
+        } else if (error.message.includes("configuration")) {
             addMessage(
-                "Failed to generate response. Please try again in a moment."
+                "Service is not properly configured. Please check back later."
             );
+        } else if (error.message.includes("API Error")) {
+            addMessage(
+                "Service is temporarily unavailable. Please try again in a few minutes."
+            );
+        } else {
+            addMessage("An unexpected error occurred. Please try again later.");
         }
     } finally {
         isProcessing = false;
