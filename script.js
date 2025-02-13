@@ -8,7 +8,7 @@ import {
     HONORS_COURSES,
     BTP_COURSES,
 } from "./data.js";
-import { config } from "./config.js";
+// import { config } from "./config.js";
 
 class GradeCalculator {
     constructor() {
@@ -1224,18 +1224,10 @@ const processResponse = (text) => {
     return cleanText;
 };
 
-// Update the handleModeSelection function
 const handleModeSelection = async function (mode) {
     if (isProcessing) return;
     isProcessing = true;
     chatMessages.innerHTML = "";
-
-    // Check if config is properly loaded
-    if (!config.HF_TOKEN || !config.MODEL_NAME) {
-        addMessage("Configuration error. Please try again later.");
-        isProcessing = false;
-        return;
-    }
 
     try {
         const record = getAcademicRecord();
@@ -1259,39 +1251,21 @@ const handleModeSelection = async function (mode) {
             '<div class="typing-indicator"><span></span><span></span><span></span></div>'
         );
 
-        // Validate API URL and token
-        const API_URL = `https://api-inference.huggingface.co/models/${config.MODEL_NAME}`;
-        if (!API_URL.includes("huggingface")) {
-            throw new Error("Invalid API configuration");
-        }
-
-        const response = await fetch(API_URL, {
+        // Call your own API
+        const response = await fetch("/api/proxy", {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${config.HF_TOKEN}`,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-                inputs: PROMPTS[mode](record, stats),
-                parameters: {
-                    max_new_tokens: 1024,
-                    temperature: 0.9,
-                    return_full_text: false,
-                },
-            }),
-            // Add timeout
-            signal: AbortSignal.timeout(15000),
+            body: JSON.stringify({ mode, record, stats }),
         });
 
         if (!response.ok) {
-            throw new Error(
-                `API Error: ${response.status} - ${await response.text()}`
-            );
+            throw new Error(`API Error: ${response.status}`);
         }
 
         const result = await response.json();
 
-        // Validate response format
         if (!result[0]?.generated_text) {
             throw new Error("Invalid API response format");
         }
@@ -1311,20 +1285,7 @@ const handleModeSelection = async function (mode) {
     } catch (error) {
         console.error("API Error:", error);
         chatMessages.removeChild(chatMessages.lastChild);
-        // More specific error messages
-        if (error.name === "AbortError") {
-            addMessage("Request timeout. Please try again.");
-        } else if (error.message.includes("configuration")) {
-            addMessage(
-                "Service is not properly configured. Please check back later."
-            );
-        } else if (error.message.includes("API Error")) {
-            addMessage(
-                "Service is temporarily unavailable. Please try again in a few minutes."
-            );
-        } else {
-            addMessage("An unexpected error occurred. Please try again later.");
-        }
+        addMessage("An error occurred. Please try again.");
     } finally {
         isProcessing = false;
     }
