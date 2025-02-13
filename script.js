@@ -8,6 +8,7 @@ import {
     HONORS_COURSES,
     BTP_COURSES,
 } from "./data.js";
+import { config } from "./config.js";
 
 class GradeCalculator {
     constructor() {
@@ -1079,3 +1080,309 @@ Thanks!`;
 
 // Initialize the calculator
 const calculator = new GradeCalculator();
+
+// Chat UI handling
+const chatContainer = document.querySelector(".chat-container");
+const chatToggle = document.getElementById("chatToggle");
+const chatMessages = document.getElementById("chatMessages");
+const modeBtns = document.querySelectorAll(".mode-btn");
+
+// Initialize chat state
+let isChatOpen = false;
+let isProcessing = false;
+
+// Toggle chat open/close
+chatToggle.addEventListener("click", () => {
+    isChatOpen = !isChatOpen;
+    chatContainer.classList.toggle("open");
+    chatToggle.classList.toggle("open");
+    // Reset buttons to default state when closing chat
+    if (!isChatOpen) {
+        modeBtns.forEach((btn) => {
+            btn.classList.remove("active");
+            btn.style.background = "white";
+            btn.style.color = "#111827";
+        });
+    }
+});
+
+// Add mode button handling
+modeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        if (isProcessing) return;
+
+        // Reset all buttons first
+        modeBtns.forEach((b) => {
+            b.classList.remove("active");
+            b.style.background = "white";
+            b.style.color = "#111827";
+        });
+
+        // Activate clicked button
+        btn.classList.add("active");
+        btn.style.background = "#111827";
+        btn.style.color = "white";
+
+        currentMode = btn.dataset.mode;
+
+        handleModeSelection(btn.dataset.mode);
+    });
+});
+
+// Close chat when clicking outside
+document.addEventListener("click", (e) => {
+    if (
+        isChatOpen &&
+        !chatContainer.contains(e.target) &&
+        !chatToggle.contains(e.target)
+    ) {
+        isChatOpen = false;
+        chatContainer.classList.remove("open");
+        chatToggle.classList.remove("open");
+    }
+});
+
+// Mode selection
+let currentMode = "roast";
+modeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        modeBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentMode = btn.dataset.mode;
+        handleModeSelection(btn.dataset.mode);
+    });
+});
+
+// Enhanced prompts
+const PROMPTS = {
+    roast: (record, stats) =>
+        `You are a CS professor known for brutal roasts. Generate roasts about this student's performance.
+
+        Current Courses and Grades:
+        ${record.courses
+            .map((c) => `- ${c.name} (${c.code}): Grade ${c.grade}`)
+            .join("\n")}
+
+        Rules:
+        - Generate one roast per course, each starting with "1) ", "2) ", etc.
+        - Each roast MUST be a complete sentence in this exact format:
+        - Format: "1) In **CourseName**, [your roast here]"
+        - Use CS/programming puns and technical humor
+        - For grades 9-10: Mock their perfectionism
+        - For grades 7-8: Mix praise with savage criticism
+        - For grades below 7: Brutal but constructive roasting
+        - Keep each roast to 1-2 sentences
+        - End with a roast about CGPA as the last point
+
+        IMPORTANT: Format EXACTLY like this:
+        1) In **Course Name**, [roast about their performance]
+        2) In **Course Name**, [roast about their performance]
+        3) Looking at your ${stats.cgpa} CGPA with a ${
+            stats.trend
+        } trend, [final roast]
+
+        DO NOT include any other text or explanations.`,
+
+    guide: (record, stats) =>
+        `You are an academic advisor. Generate guidance points.
+
+        Current Courses and Grades:
+        ${record.courses
+            .map((c) => `- ${c.name} (${c.code}): Grade ${c.grade}`)
+            .join("\n")}
+
+        Rules:
+        - Generate one point per course below grade 9
+        - Each point MUST be in this exact format:
+        - Format: "1) For **CourseName**, [your advice here]"
+        - Provide specific, actionable advice
+        - Use technical terms and CS metaphors
+        - Keep each point to 2-3 sentences
+        - End with CGPA advice as the last point
+
+        IMPORTANT: Format EXACTLY like this:
+        1) For **Course Name**, [specific improvement advice]
+        2) For **Course Name**, [specific improvement advice]
+        3) With your ${stats.cgpa} CGPA showing a ${
+            stats.trend
+        } trend, [overall advice]
+
+        DO NOT include any other text or explanations.`,
+};
+
+// Update the response processing
+const processResponse = (text) => {
+    // Clean up the response
+    const cleanText = text
+        .trim()
+        .replace(/\n+/g, "\n")
+        .split("\n")
+        .filter((line) => /^\d+\)/.test(line.trim()))
+        .map((line) => line.trim())
+        .filter((line) => line.length > 20); // Just ensure it's a complete sentence
+
+    return cleanText;
+};
+
+// Update the handleModeSelection function
+window.handleModeSelection = async function (mode) {
+    if (isProcessing) return;
+    isProcessing = true;
+    chatMessages.innerHTML = "";
+
+    try {
+        const record = getAcademicRecord();
+        if (!record) {
+            addMessage("Please add some courses first!");
+            return;
+        }
+
+        const stats = {
+            cgpa: (
+                record.courses.reduce(
+                    (sum, c) => sum + c.grade * c.credits,
+                    0
+                ) / record.courses.reduce((sum, c) => sum + c.credits, 0)
+            ).toFixed(2),
+            trend: record.trend,
+        };
+
+        addMessage(
+            '<div class="typing-indicator"><span></span><span></span><span></span></div>'
+        );
+
+        const response = await fetch(
+            `https://api-inference.huggingface.co/models/${config.MODEL_NAME}`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${config.HF_TOKEN}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    inputs: PROMPTS[mode](record, stats),
+                    parameters: {
+                        max_new_tokens: 1024,
+                        temperature: 0.9, // Increase creativity for roasts
+                        return_full_text: false,
+                    },
+                }),
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`API responded with status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (!result[0]?.generated_text) {
+            throw new Error("Invalid response format");
+        }
+
+        const points = processResponse(result[0].generated_text);
+
+        if (!points || points.length === 0) {
+            throw new Error("No valid points found in response");
+        }
+
+        chatMessages.removeChild(chatMessages.lastChild);
+
+        for (const point of points) {
+            const formattedPoint = point.replace(/^\d+\)\s*/, "").trim();
+
+            await addMessageWithDelay(formattedPoint, 1200);
+        }
+    } catch (error) {
+        console.error("API Error:", error);
+        chatMessages.removeChild(chatMessages.lastChild);
+        if (error.name === "AbortError") {
+            addMessage("The request took too long. Please try again.");
+        } else {
+            addMessage(
+                "Failed to generate response. Please try again in a moment."
+            );
+        }
+    } finally {
+        isProcessing = false;
+    }
+};
+
+// Update message styling
+function addMessage(text, isUser = false) {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${isUser ? "user" : "assistant"}`;
+
+    if (text.includes("typing-indicator")) {
+        messageDiv.innerHTML = text;
+    } else {
+        // Keep the HTML formatting for bold text
+        const formattedText = text.replace(
+            /\*\*(.*?)\*\*/g,
+            '<span class="bold-text">$1</span>'
+        );
+
+        messageDiv.innerHTML = `
+            <div class="flex items-start gap-2 px-3 py-2">
+                <span class="text-blue-400">→</span>
+                <span class="text-gray-700 leading-tight">${formattedText}</span>
+            </div>
+        `;
+    }
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Add message with delay
+async function addMessageWithDelay(text, delay = 500) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            addMessage(text);
+            resolve();
+        }, delay);
+    });
+}
+
+// Get data from GradeCalculator's storage
+function getAcademicRecord() {
+    try {
+        const savedState = localStorage.getItem("gradeCalculatorState");
+        if (!savedState) return null;
+
+        const state = JSON.parse(savedState);
+        if (!state.courses || state.courses.length === 0) return null;
+
+        // Calculate trend
+        const semesterGrades = {};
+        state.courses.forEach((course) => {
+            if (!semesterGrades[course.semester]) {
+                semesterGrades[course.semester] = { total: 0, credits: 0 };
+            }
+            semesterGrades[course.semester].total +=
+                course.grade * course.credits;
+            semesterGrades[course.semester].credits += course.credits;
+        });
+
+        const sgpas = Object.entries(semesterGrades)
+            .map(([sem, data]) => ({
+                semester: parseInt(sem),
+                sgpa: data.total / data.credits,
+            }))
+            .sort((a, b) => a.semester - b.semester);
+
+        const trend =
+            sgpas.length > 1
+                ? sgpas[sgpas.length - 1].sgpa > sgpas[0].sgpa
+                    ? "improving"
+                    : "declining"
+                : "stable";
+
+        return {
+            courses: state.courses,
+            trend: trend,
+        };
+    } catch (error) {
+        console.error("Error parsing academic record:", error);
+        return null;
+    }
+}

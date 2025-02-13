@@ -1,0 +1,6 @@
+.env
+.env.local
+.DS_Store
+node_modules/
+config.js 
+dummy.html
