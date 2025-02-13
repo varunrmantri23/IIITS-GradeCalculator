@@ -42,6 +42,11 @@ const SSHAM_ELECTIVES = [
     { code: "SSH507", name: "Innovation and Entrepreneurship", credits: 2 },
     { code: "SSH508", name: "Climate Change and its Implications", credits: 2 },
     { code: "SSH509", name: "ICT for Development", credits: 2 },
+    {
+        code: "QIC101",
+        name: "Quantum Information & Computing",
+        credits: 2,
+    },
 ];
 
 // BTP Courses
@@ -367,6 +372,11 @@ const BASE_CSE_CURRICULUM = {
                     name: "Advanced Communication Skills",
                     credits: 2,
                 },
+                {
+                    code: "QIC101",
+                    name: "Quantum Information & Computing",
+                    credits: 2,
+                },
             ],
         },
     },
@@ -540,6 +550,11 @@ const BASE_ECE_CURRICULUM = {
                 {
                     code: "ISK202",
                     name: "Advanced Communication Skills",
+                    credits: 2,
+                },
+                {
+                    code: "QIC101",
+                    name: "Quantum Information & Computing",
                     credits: 2,
                 },
             ],
