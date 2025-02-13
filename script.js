@@ -24,6 +24,7 @@ class GradeCalculator {
         this.initializeElements();
         this.setupEventListeners();
         this.initializeHonorsAndBTP();
+        this.initializeChart();
         this.initializeFromStorage();
         this.populateSemesters();
         this.setupViewToggle();
@@ -427,14 +428,17 @@ class GradeCalculator {
         this.saveToStorage();
         this.renderCourses();
         this.updateResults();
-        this.initializeSemesterView();
 
         // Reset form
         this.form.reset();
-        this.courseTypeSelect.innerHTML =
-            '<option value="">Select Type</option>';
-        this.courseNameSelect.innerHTML =
-            '<option value="">Select Course</option>';
+        this.updateCourseOptions();
+
+        // Add flash effect to button
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        submitButton.classList.add("ring-2", "ring-green-500");
+        setTimeout(() => {
+            submitButton.classList.remove("ring-2", "ring-green-500");
+        }, 2000);
     }
 
     addCourse(course) {
@@ -575,12 +579,8 @@ class GradeCalculator {
             });
         });
 
-        // Show/hide result card
-        if (this.courses.length > 0) {
-            this.resultCard.classList.remove("hidden");
-        } else {
-            this.resultCard.classList.add("hidden");
-        }
+        // Show/hide result card and update stats
+        this.updateResults();
     }
 
     updateResults() {
@@ -589,67 +589,83 @@ class GradeCalculator {
             return;
         }
 
+        // Calculate semester-wise stats
         const semesterGPAs = {};
         const semesterCredits = {};
 
         this.courses.forEach((course) => {
-            if (!semesterGPAs[course.semester]) {
-                semesterGPAs[course.semester] = 0;
-                semesterCredits[course.semester] = 0;
+            const sem = parseInt(course.semester); // Parse semester to number
+            if (!semesterGPAs[sem]) {
+                semesterGPAs[sem] = 0;
+                semesterCredits[sem] = 0;
             }
-            semesterGPAs[course.semester] += course.credits * course.grade;
-            semesterCredits[course.semester] += course.credits;
+            semesterGPAs[sem] += course.grade * course.credits;
+            semesterCredits[sem] += course.credits;
         });
 
+        // Calculate total stats
         let totalCredits = 0;
         let totalWeightedSum = 0;
 
         Object.keys(semesterGPAs).forEach((sem) => {
-            const semGPA = semesterGPAs[sem] / semesterCredits[sem];
             totalCredits += semesterCredits[sem];
             totalWeightedSum += semesterGPAs[sem];
         });
 
-        const cgpa = totalWeightedSum / totalCredits;
-
+        // Update UI
         this.resultCard.classList.remove("hidden");
-        this.resultCard.innerHTML = `
-            <h2 class="text-lg font-semibold mb-4">Your Results</h2>
-            
-            <div class="mb-6">
-                <h3 class="text-md font-medium mb-2">Semester-wise GPA</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    ${Object.keys(semesterGPAs)
-                        .map(
-                            (sem) => `
-                        <div class="p-3 bg-gray-50 rounded-lg">
-                            <p class="text-sm text-gray-600">Semester ${sem}</p>
-                            <p class="text-lg font-bold">${(
-                                semesterGPAs[sem] / semesterCredits[sem]
-                            ).toFixed(2)}</p>
-                            <p class="text-xs text-gray-500">${
-                                semesterCredits[sem]
-                            } credits</p>
-                        </div>
-                    `
-                        )
-                        .join("")}
-                </div>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="p-4 bg-blue-50 rounded-lg">
-                    <p class="text-sm text-blue-600">CGPA</p>
-                    <p class="text-2xl font-bold text-blue-900">${cgpa.toFixed(
-                        2
-                    )}</p>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-600">Total Credits</p>
-                    <p class="text-2xl font-bold text-gray-900">${totalCredits}</p>
-                </div>
-            </div>
-        `;
+        // Update CGPA
+        const cgpa = totalWeightedSum / totalCredits;
+        document.getElementById("cgpaResult").textContent = cgpa.toFixed(2);
+
+        // Update current semester GPA
+        const currentSem = Math.max(...Object.keys(semesterGPAs).map(Number));
+        const currentGPA =
+            semesterGPAs[currentSem] / semesterCredits[currentSem];
+        this.gpaResult.textContent = currentGPA.toFixed(2);
+
+        // Update total credits
+        this.totalCredits.textContent = totalCredits;
+
+        // Update chart
+        const labels = [];
+        const data = [];
+
+        // Sort semesters and calculate SGPA for each
+        Object.keys(semesterGPAs)
+            .sort((a, b) => a - b)
+            .forEach((sem) => {
+                labels.push(`Sem ${sem}`);
+                const sgpa = semesterGPAs[sem] / semesterCredits[sem];
+                data.push(sgpa.toFixed(2));
+            });
+
+        // Update chart
+        if (this.sgpaChart) {
+            this.sgpaChart.data.labels = labels;
+            this.sgpaChart.data.datasets[0].data = data;
+            this.sgpaChart.update();
+        }
+    }
+
+    updateSGPAChart(semesterGPAs, semesterCredits) {
+        const labels = [];
+        const data = [];
+
+        // Sort semesters and calculate SGPA for each
+        Object.keys(semesterGPAs)
+            .sort((a, b) => a - b)
+            .forEach((sem) => {
+                labels.push(`Sem ${sem}`);
+                const sgpa = semesterGPAs[sem] / semesterCredits[sem];
+                data.push(sgpa.toFixed(2));
+            });
+
+        // Update chart
+        this.sgpaChart.data.labels = labels;
+        this.sgpaChart.data.datasets[0].data = data;
+        this.sgpaChart.update();
     }
 
     clearAll() {
@@ -666,18 +682,8 @@ class GradeCalculator {
             // Clear storage
             this.clearStorage();
 
-            // Reset UI
-            this.courseTableBody.innerHTML = "";
-            this.updateResults();
-            this.initializeSemesterView();
-
-            // Reset dropdowns
-            document.getElementById("specializationSelect").value = "";
-            document.getElementById("honorsSelect").value = "no";
-            this.isHonors = false;
-
-            // Update curriculum
-            this.updateCurriculum();
+            // Reload the page instead of manual UI updates
+            window.location.reload();
         }
     }
 
@@ -919,7 +925,6 @@ Thanks!`;
     initializeFromStorage() {
         const savedState = this.loadFromStorage();
         if (savedState) {
-            this.currentBranch = savedState.currentBranch || "cse";
             this.courses = savedState.courses || [];
             this.selectedInstituteElectives = new Set(
                 savedState.selectedInstituteElectives || []
@@ -928,24 +933,15 @@ Thanks!`;
             this.isHonors = savedState.isHonors || false;
             this.customCourses = savedState.customCourses || [];
 
-            // Update UI
-            this.branchSelect.value = this.currentBranch;
+            // Update UI with saved state
             document.getElementById("specializationSelect").value =
                 this.currentSpecialization;
             document.getElementById("honorsSelect").value = this.isHonors
                 ? "yes"
                 : "no";
 
-            this.updateSpecializationOptions();
-            this.updateCurriculum();
+            // Render courses and update results (which includes the chart)
             this.renderCourses();
-            this.updateResults();
-            this.initializeSemesterView();
-
-            // Add custom courses to curriculum
-            this.customCourses.forEach((course) =>
-                this.addCustomCourseToCurriculum(course)
-            );
         }
     }
 
@@ -1041,6 +1037,43 @@ Thanks!`;
         this.renderCourses();
         this.updateResults();
         this.initializeSemesterView();
+    }
+
+    initializeChart() {
+        const ctx = document.getElementById("sgpaChart").getContext("2d");
+        this.sgpaChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: "SGPA",
+                        data: [],
+                        borderColor: "rgb(59, 130, 246)",
+                        backgroundColor: "rgba(59, 130, 246, 0.1)",
+                        tension: 0.4,
+                        fill: true,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 10,
+                        ticks: {
+                            stepSize: 2,
+                        },
+                    },
+                },
+            },
+        });
     }
 }
 
