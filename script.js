@@ -8,6 +8,7 @@ import {
     HONORS_COURSES,
     BTP_COURSES,
 } from "./data.js";
+import { config } from "./config.js";
 
 class GradeCalculator {
     constructor() {
@@ -1124,7 +1125,7 @@ modeBtns.forEach((btn) => {
 
         currentMode = btn.dataset.mode;
 
-        handleModeSelection(btn.dataset.mode);
+        handleModeSelection(currentMode);
     });
 });
 
@@ -1148,7 +1149,7 @@ modeBtns.forEach((btn) => {
         modeBtns.forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         currentMode = btn.dataset.mode;
-        handleModeSelection(btn.dataset.mode);
+        handleModeSelection(currentMode);
     });
 });
 
@@ -1223,18 +1224,14 @@ const processResponse = (text) => {
     return cleanText;
 };
 
-// Get environment variables
-const HF_TOKEN = process.env.HF_TOKEN;
-const MODEL_NAME = process.env.MODEL_NAME;
-
 // Update the handleModeSelection function
-window.handleModeSelection = async function (mode) {
+const handleModeSelection = async function (mode) {
     if (isProcessing) return;
     isProcessing = true;
     chatMessages.innerHTML = "";
 
     // Check if config is properly loaded
-    if (!HF_TOKEN || !MODEL_NAME) {
+    if (!config.HF_TOKEN || !config.MODEL_NAME) {
         addMessage("Configuration error. Please try again later.");
         isProcessing = false;
         return;
@@ -1263,7 +1260,7 @@ window.handleModeSelection = async function (mode) {
         );
 
         // Validate API URL and token
-        const API_URL = `https://api-inference.huggingface.co/models/${MODEL_NAME}`;
+        const API_URL = `https://api-inference.huggingface.co/models/${config.MODEL_NAME}`;
         if (!API_URL.includes("huggingface")) {
             throw new Error("Invalid API configuration");
         }
@@ -1271,7 +1268,7 @@ window.handleModeSelection = async function (mode) {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${HF_TOKEN}`,
+                Authorization: `Bearer ${config.HF_TOKEN}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
