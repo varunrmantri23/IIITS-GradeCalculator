@@ -592,15 +592,18 @@ class GradeCalculator {
         // Calculate semester-wise stats
         const semesterGPAs = {};
         const semesterCredits = {};
+        const semesterWeightedSums = {};
 
         this.courses.forEach((course) => {
             const sem = parseInt(course.semester); // Parse semester to number
             if (!semesterGPAs[sem]) {
                 semesterGPAs[sem] = 0;
                 semesterCredits[sem] = 0;
+                semesterWeightedSums[sem] = 0;
             }
             semesterGPAs[sem] += course.grade * course.credits;
             semesterCredits[sem] += course.credits;
+            semesterWeightedSums[sem] += course.grade * course.credits;
         });
 
         // Calculate total stats
@@ -628,26 +631,76 @@ class GradeCalculator {
         // Update total credits
         this.totalCredits.textContent = totalCredits;
 
-        // Update chart
-        const labels = [];
-        const data = [];
+        // Update SGPA chart
+        const sgpaLabels = [];
+        const sgpaData = [];
 
         // Sort semesters and calculate SGPA for each
         Object.keys(semesterGPAs)
             .sort((a, b) => a - b)
             .forEach((sem) => {
-                labels.push(`Sem ${sem}`);
+                sgpaLabels.push(`Sem ${sem}`);
                 const sgpa = semesterGPAs[sem] / semesterCredits[sem];
-                data.push(sgpa.toFixed(2));
+                sgpaData.push(sgpa.toFixed(2));
             });
 
-        // Update chart
+        // Update sgpa chart
         if (this.sgpaChart) {
-            this.sgpaChart.data.labels = labels;
-            this.sgpaChart.data.datasets[0].data = data;
+            this.sgpaChart.data.labels = sgpaLabels;
+            this.sgpaChart.data.datasets[0].data = sgpaData;
             this.sgpaChart.update();
         }
+
+         // Update CGPA chart
+        const cgpaLabels = [];
+        const cgpaData = [];
+        let cumulativeSum = 0;
+        let cumulativeCredits = 0;
+
+        Object.keys(semesterWeightedSums)
+            .sort((a, b) => a - b)
+            .forEach((sem) => {
+                cgpaLabels.push(`Sem ${sem}`);
+                cumulativeSum += semesterWeightedSums[sem];
+                cumulativeCredits += semesterCredits[sem];
+
+                const semesterCGPA = (cumulativeSum / cumulativeCredits).toFixed(2);
+                cgpaData.push(semesterCGPA);
+            });
+
+        if (this.cgpaChart) {
+            this.cgpaChart.data.labels = cgpaLabels;
+            this.cgpaChart.data.datasets[0].data = cgpaData;
+            this.cgpaChart.update();
+        }
+
     }
+
+    updateCGPAChart(semesterWeightedSums, semesterCredits) {
+        const labels = [];
+        const data = [];
+        let cumulativeSum = 0;
+        let cumulativeCredits = 0;
+    
+        // Sort semesters and calculate cumulative CGPA for each
+        Object.keys(semesterWeightedSums)
+            .sort((a, b) => a - b)
+            .forEach((sem) => {
+                labels.push(`Sem ${sem}`);
+                cumulativeSum += semesterWeightedSums[sem];
+                cumulativeCredits += semesterCredits[sem];
+    
+                const cgpa = (cumulativeSum / cumulativeCredits).toFixed(2);
+                data.push(cgpa);
+            });
+    
+        // Update chart
+        this.cgpaChart.data.labels = labels;
+        this.cgpaChart.data.datasets[0].data = data;
+        this.cgpaChart.update();
+    }
+    
+    
 
     updateSGPAChart(semesterGPAs, semesterCredits) {
         const labels = [];
@@ -1048,6 +1101,41 @@ Thanks!`;
                 datasets: [
                     {
                         label: "SGPA",
+                        data: [],
+                        borderColor: "rgb(59, 130, 246)",
+                        backgroundColor: "rgba(59, 130, 246, 0.1)",
+                        tension: 0.4,
+                        fill: true,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 10,
+                        ticks: {
+                            stepSize: 2,
+                        },
+                    },
+                },
+            },
+        });
+
+        const gtx = document.getElementById("cgpaChart").getContext("2d");
+        this.cgpaChart = new Chart(gtx, {
+            type: "line",
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: "CGPA",
                         data: [],
                         borderColor: "rgb(59, 130, 246)",
                         backgroundColor: "rgba(59, 130, 246, 0.1)",
