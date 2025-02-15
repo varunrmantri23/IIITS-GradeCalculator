@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+package-lock.json
+.package-lock.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# Build output
+dist/
+build/
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Vercel
+.vercel
+
+# Config files with sensitive data
+config.js 
