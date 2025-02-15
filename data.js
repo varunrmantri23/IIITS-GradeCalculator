@@ -128,7 +128,7 @@ const CSE_SPECIALIZATIONS = {
         courses: {
             semester6: [
                 {
-                    code: "SDS001",
+                    code: "IIE001",
                     name: "Introduction to Data Analytics",
                     credits: 3,
                 },
@@ -232,7 +232,7 @@ const ECE_SPECIALIZATIONS = {
         courses: {
             semester6: [
                 {
-                    code: "SDS001",
+                    code: "IIE001",
                     name: "Introduction to Data Analytics",
                     credits: 3,
                 },
