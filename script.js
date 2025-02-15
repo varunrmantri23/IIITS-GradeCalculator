@@ -631,9 +631,15 @@ class GradeCalculator {
         // Update total credits
         this.totalCredits.textContent = totalCredits;
 
-        // Update SGPA chart
+        // SGPA data 
         const sgpaLabels = [];
         const sgpaData = [];
+
+        // CGPA data
+        const cgpaLabels = [];
+        const cgpaData = [];
+        let cumulativeSum = 0;
+        let cumulativeCredits = 0;
 
         // Sort semesters and calculate SGPA for each
         Object.keys(semesterGPAs)
@@ -644,19 +650,7 @@ class GradeCalculator {
                 sgpaData.push(sgpa.toFixed(2));
             });
 
-        // Update sgpa chart
-        if (this.sgpaChart) {
-            this.sgpaChart.data.labels = sgpaLabels;
-            this.sgpaChart.data.datasets[0].data = sgpaData;
-            this.sgpaChart.update();
-        }
-
-         // Update CGPA chart
-        const cgpaLabels = [];
-        const cgpaData = [];
-        let cumulativeSum = 0;
-        let cumulativeCredits = 0;
-
+        // Calculate CGPA
         Object.keys(semesterWeightedSums)
             .sort((a, b) => a - b)
             .forEach((sem) => {
@@ -668,58 +662,52 @@ class GradeCalculator {
                 cgpaData.push(semesterCGPA);
             });
 
-        if (this.cgpaChart) {
-            this.cgpaChart.data.labels = cgpaLabels;
-            this.cgpaChart.data.datasets[0].data = cgpaData;
-            this.cgpaChart.update();
+        if (this.combinedChart) {
+            this.combinedChart.data.labels = sgpaLabels; // Assuming SGPA & CGPA share same labels
+            // Update SGPA dataset (Index 0)
+            this.combinedChart.data.datasets[0].data = sgpaData;
+            // Update CGPA dataset (Index 1)
+            this.combinedChart.data.datasets[1].data = cgpaData;        
+            // Refresh 
+            this.combinedChart.update();
         }
+            
 
     }
 
-    updateCGPAChart(semesterWeightedSums, semesterCredits) {
+    updateCombinedChart(semesterWeightedSums, semesterCredits, semesterGPAs) {
         const labels = [];
-        const data = [];
+        const sgpaData = [];
+        const cgpaData = [];
         let cumulativeSum = 0;
         let cumulativeCredits = 0;
     
-        // Sort semesters and calculate cumulative CGPA for each
+        // Sort semesters and compute both SGPA and CGPA
         Object.keys(semesterWeightedSums)
             .sort((a, b) => a - b)
             .forEach((sem) => {
                 labels.push(`Sem ${sem}`);
+    
+                // Calculate cumulative CGPA
                 cumulativeSum += semesterWeightedSums[sem];
                 cumulativeCredits += semesterCredits[sem];
-    
                 const cgpa = (cumulativeSum / cumulativeCredits).toFixed(2);
-                data.push(cgpa);
+                cgpaData.push(cgpa);
+    
+                // Calculate SGPA
+                const sgpa = (semesterGPAs[sem] / semesterCredits[sem]).toFixed(2);
+                sgpaData.push(sgpa);
             });
     
-        // Update chart
-        this.cgpaChart.data.labels = labels;
-        this.cgpaChart.data.datasets[0].data = data;
-        this.cgpaChart.update();
+        // Update combined chart
+        if (this.combinedChart) {
+            this.combinedChart.data.labels = labels;
+            this.combinedChart.data.datasets[0].data = sgpaData; // SGPA dataset (blue)
+            this.combinedChart.data.datasets[1].data = cgpaData; // CGPA dataset (green)
+            this.combinedChart.update();
+        }
     }
     
-    
-
-    updateSGPAChart(semesterGPAs, semesterCredits) {
-        const labels = [];
-        const data = [];
-
-        // Sort semesters and calculate SGPA for each
-        Object.keys(semesterGPAs)
-            .sort((a, b) => a - b)
-            .forEach((sem) => {
-                labels.push(`Sem ${sem}`);
-                const sgpa = semesterGPAs[sem] / semesterCredits[sem];
-                data.push(sgpa.toFixed(2));
-            });
-
-        // Update chart
-        this.sgpaChart.data.labels = labels;
-        this.sgpaChart.data.datasets[0].data = data;
-        this.sgpaChart.update();
-    }
 
     clearAll() {
         if (
@@ -1093,54 +1081,28 @@ Thanks!`;
     }
 
     initializeChart() {
-        const ctx = document.getElementById("sgpaChart").getContext("2d");
-        this.sgpaChart = new Chart(ctx, {
+        const ctx = document.getElementById("combinedChart").getContext("2d");
+    
+        this.combinedChart = new Chart(ctx, {
             type: "line",
             data: {
-                labels: [],
+                labels: [], // This should be dynamically updated with semester labels
                 datasets: [
                     {
                         label: "SGPA",
-                        data: [],
-                        borderColor: "rgb(59, 130, 246)",
+                        data: [], // SGPA values
+                        borderColor: "rgb(59, 130, 246)", // Blue
                         backgroundColor: "rgba(59, 130, 246, 0.1)",
-                        tension: 0.4,
-                        fill: true,
+                        tension: 0.5,
+                        
                     },
-                ],
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                },
-                scales: {
-                    y: {
-                        min: 0,
-                        max: 10,
-                        ticks: {
-                            stepSize: 2,
-                        },
-                    },
-                },
-            },
-        });
-
-        const gtx = document.getElementById("cgpaChart").getContext("2d");
-        this.cgpaChart = new Chart(gtx, {
-            type: "line",
-            data: {
-                labels: [],
-                datasets: [
                     {
                         label: "CGPA",
-                        data: [],
-                        borderColor: "rgb(59, 130, 246)",
-                        backgroundColor: "rgba(59, 130, 246, 0.1)",
-                        tension: 0.4,
-                        fill: true,
+                        data: [], // CGPA values
+                        borderColor: "rgb(34, 197, 94)", // Green
+                        backgroundColor: "rgba(34, 197, 94, 0.1)",
+                        tension: 0.5,
+                        
                     },
                 ],
             },
@@ -1148,7 +1110,7 @@ Thanks!`;
                 responsive: true,
                 plugins: {
                     legend: {
-                        display: false,
+                        display: true, // Show legend to differentiate SGPA and CGPA
                     },
                 },
                 scales: {
@@ -1163,6 +1125,7 @@ Thanks!`;
             },
         });
     }
+    
 }
 
 // Initialize the calculator
