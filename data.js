@@ -78,6 +78,7 @@ const CSE_PROGRAM_ELECTIVES = [
     { code: "PE011", name: "Natural Language Processing", credits: 3 },
     { code: "PE012", name: "Principles of Cyber Physical System", credits: 3 },
     { code: "PE013", name: "Soft Computing and evolutionary AI", credits: 3 },
+    { code: "SCS001", name: "Introduction to Cyber Security", credits: 3 }, // New course added here
 ];
 
 const ECE_PROGRAM_ELECTIVES = [
